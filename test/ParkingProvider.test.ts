@@ -173,5 +173,19 @@ describe('ParkingProvider', async () => {
         parkingProvider.connect(user).acquireSpot(),
       ).to.be.revertedWith('No parking spots to acquire')
     })
+
+    it('Should throw if all spots are occupied', async () => {
+      const [deployer, user1, user2] = await ethers.getSigners()
+      const parkingProvider = new ParkingProvider__factory(deployer).attach(
+        contractAddress,
+      )
+
+      await parkingProvider.createParkingSpot()
+      await parkingProvider.connect(user1).acquireSpot()
+
+      await expect(
+        parkingProvider.connect(user2).acquireSpot(),
+      ).to.be.revertedWith('No unoccupied parking spots')
+    })
   })
 })

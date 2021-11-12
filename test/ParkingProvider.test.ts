@@ -116,6 +116,8 @@ describe('ParkingProvider', async () => {
         contractAddress,
       )
 
+      await parkingProvider.createParkingSpot()
+
       await expect(
         parkingProvider.connect(user).destroyParkingSpot(),
       ).to.be.revertedWith('Only burner may destroy spot')
@@ -129,7 +131,7 @@ describe('ParkingProvider', async () => {
 
       await expect(
         parkingProvider.connect(deployer).destroyParkingSpot(),
-      ).to.be.revertedWith('No parking spots to remove')
+      ).to.be.revertedWith('No parking spots exist')
     })
 
     it('Should throw if all spots are occupied', async () => {
@@ -142,7 +144,7 @@ describe('ParkingProvider', async () => {
       await parkingProvider.connect(user).acquireSpot()
 
       await expect(parkingProvider.destroyParkingSpot()).to.be.revertedWith(
-        'No unoccupied parking spots',
+        'No free parking spots',
       )
     })
   })
@@ -171,7 +173,7 @@ describe('ParkingProvider', async () => {
 
       await expect(
         parkingProvider.connect(user).acquireSpot(),
-      ).to.be.revertedWith('No parking spots to acquire')
+      ).to.be.revertedWith('No parking spots exist')
     })
 
     it('Should throw if all spots are occupied', async () => {
@@ -185,7 +187,7 @@ describe('ParkingProvider', async () => {
 
       await expect(
         parkingProvider.connect(user2).acquireSpot(),
-      ).to.be.revertedWith('No unoccupied parking spots')
+      ).to.be.revertedWith('No free parking spots')
     })
   })
 })

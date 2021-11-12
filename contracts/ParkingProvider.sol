@@ -6,8 +6,9 @@ import {ParkingState} from "./utils/structs/ParkingState.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "hardhat/console.sol";
 import "./ParkingSpot.sol";
+import "./utils/access/ParkingAccessControl.sol";
 
-contract ParkingProvider is AccessControl {
+contract ParkingProvider is AccessControl, ParkingAccessControl {
     ParkingSpot[] private parkingSpots;
     ParkingState.State private parkingState;
 
@@ -31,13 +32,15 @@ contract ParkingProvider is AccessControl {
         parkingState.freeSpots += 1;
     }
 
-    function destroyParkingSpot() external {
+    function destroyParkingSpot()
+        external
+        ifSpotExists(parkingSpots)
+        ifSpotAvailable(parkingState)
+    {
         require(
             hasRole(BURNER_ROLE, msg.sender),
             "Only burner may destroy spot"
         );
-        require(parkingSpots.length > 0, "No parking spots to remove");
-        require(parkingState.freeSpots > 0, "No unoccupied parking spots");
 
         uint256 parkingSize = parkingSpots.length;
 
@@ -51,10 +54,11 @@ contract ParkingProvider is AccessControl {
         }
     }
 
-    function acquireSpot() external {
-        require(parkingSpots.length > 0, "No parking spots to acquire");
-        require(parkingState.freeSpots > 0, "No unoccupied parking spots");
-
+    function acquireSpot()
+        external
+        ifSpotExists(parkingSpots)
+        ifSpotAvailable(parkingState)
+    {
         for (uint256 i = 0; i < parkingSpots.length; ++i) {
             if (!parkingSpots[i].getMetaData().taken) {
                 parkingSpots[i].acquire(msg.sender);

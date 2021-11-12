@@ -15,6 +15,7 @@ contract ParkingSpot is IParkingSpot {
 
     function acquire(address account) external override {
         metaData.taken = true;
+        // solhint-disable-next-line not-rely-on-time,
         metaData.acquireTimestamp = block.timestamp;
         metaData.releaseTimestamp = 0;
         metaData.owner = account;
@@ -25,6 +26,7 @@ contract ParkingSpot is IParkingSpot {
 
         metaData.taken = false;
         metaData.acquireTimestamp = 0;
+        // solhint-disable-next-line not-rely-on-time,
         metaData.releaseTimestamp = block.timestamp;
         metaData.owner = address(0);
     }

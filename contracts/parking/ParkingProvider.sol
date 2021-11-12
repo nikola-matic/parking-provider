@@ -1,11 +1,11 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import {ParkingState} from "./utils/structs/ParkingState.sol";
+import {ParkingState} from "../utils/structs/ParkingState.sol";
 
 import "hardhat/console.sol";
 import "./ParkingSpot.sol";
-import "./utils/access/ParkingAccessControl.sol";
+import "../utils/access/ParkingAccessControl.sol";
 
 contract ParkingProvider is ParkingAccessControl {
     ParkingSpot[] private parkingSpots;

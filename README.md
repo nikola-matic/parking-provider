@@ -15,3 +15,7 @@ yarn compile
 ```console
 yarn test
 ```
+### Prettify .sol
+```console
+yarn prettier
+```

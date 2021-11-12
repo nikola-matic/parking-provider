@@ -82,7 +82,7 @@ describe('ParkingProvider', async () => {
 
       await expect(
         parkingProvider.connect(user).createParkingSpot(),
-      ).to.be.revertedWith('Only minter may create spot')
+      ).to.be.revertedWith('Only minter may perform operation')
 
       const parkingState = await parkingProvider.getParkingState()
       const parkingSpots = await parkingProvider.getParkingSpots()
@@ -116,11 +116,9 @@ describe('ParkingProvider', async () => {
         contractAddress,
       )
 
-      await parkingProvider.createParkingSpot()
-
       await expect(
         parkingProvider.connect(user).destroyParkingSpot(),
-      ).to.be.revertedWith('Only burner may destroy spot')
+      ).to.be.revertedWith('Only burner may perform operation')
     })
 
     it('Should throw if no parking spots exist', async () => {

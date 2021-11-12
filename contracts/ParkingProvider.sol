@@ -1,18 +1,15 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import {ParkingState} from "./utils/structs/ParkingState.sol";
+
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "hardhat/console.sol";
 import "./ParkingSpot.sol";
 
 contract ParkingProvider is AccessControl {
-    struct ParkingState {
-        uint32 freeSpots;
-        uint32 occupiedSpots;
-    }
-
     ParkingSpot[] private parkingSpots;
-    ParkingState private parkingState;
+    ParkingState.State private parkingState;
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
@@ -22,7 +19,7 @@ contract ParkingProvider is AccessControl {
         _setupRole(MINTER_ROLE, msg.sender);
         _setupRole(BURNER_ROLE, msg.sender);
 
-        parkingState = ParkingState(0, 0);
+        parkingState = ParkingState.State(0, 0);
     }
 
     function createParkingSpot() external {
@@ -42,7 +39,7 @@ contract ParkingProvider is AccessControl {
         require(parkingSpots.length > 0, "No parking spots to remove");
         require(parkingState.freeSpots > 0, "No unoccupied parking spots");
 
-        uint parkingSize = parkingSpots.length;
+        uint256 parkingSize = parkingSpots.length;
 
         for (uint256 i = 0; i < parkingSize; ++i) {
             if (!parkingSpots[i].getMetaData().taken) {
@@ -72,7 +69,11 @@ contract ParkingProvider is AccessControl {
         return parkingSpots;
     }
 
-    function getParkingState() external view returns (ParkingState memory) {
+    function getParkingState()
+        external
+        view
+        returns (ParkingState.State memory)
+    {
         return parkingState;
     }
 }

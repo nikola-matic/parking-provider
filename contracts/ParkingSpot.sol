@@ -1,21 +1,16 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import {ParkingMetaData} from "./utils/structs/ParkingMetaData.sol";
+
 import "hardhat/console.sol";
 import "./IParkingSpot.sol";
 
 contract ParkingSpot is IParkingSpot {
-    struct MetaData {
-        bool taken;
-        uint256 acquireTimestamp;
-        uint256 releaseTimestamp;
-        address owner;
-    }
-
-    MetaData internal metaData;
+    ParkingMetaData.MetaData internal metaData;
 
     constructor() {
-        metaData = MetaData(false, 0, 0, address(0));
+        metaData = ParkingMetaData.MetaData(false, 0, 0, address(0));
     }
 
     function acquire(address account) external override {
@@ -34,7 +29,11 @@ contract ParkingSpot is IParkingSpot {
         metaData.owner = address(0);
     }
 
-    function getMetaData() external view returns (MetaData memory) {
+    function getMetaData()
+        external
+        view
+        returns (ParkingMetaData.MetaData memory)
+    {
         return metaData;
     }
 }

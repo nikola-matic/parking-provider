@@ -41,7 +41,7 @@ describe('ParkingSpot', function () {
         contractAddress,
       )
 
-      await parkingSpot.acquire(user.address)
+      await parkingSpot.connect(user).acquire()
       const metaData = await parkingSpot.getMetaData()
 
       expect(metaData.taken).to.be.true
@@ -58,13 +58,13 @@ describe('ParkingSpot', function () {
         contractAddress,
       )
 
-      await parkingSpot.acquire(user.address)
+      await parkingSpot.connect(user).acquire()
       const metaDataAfterAcquire = await parkingSpot.getMetaData()
       const duration = 4000
       const epsilon = 2
       await network.provider.send('evm_increaseTime', [duration])
       await network.provider.send('evm_mine')
-      await parkingSpot.release(user.address)
+      await parkingSpot.connect(user).release()
       const metaDataAfterRelease = await parkingSpot.getMetaData()
 
       expect(
@@ -85,9 +85,9 @@ describe('ParkingSpot', function () {
         contractAddress,
       )
 
-      await parkingSpot.acquire(user.address)
-      await expect(parkingSpot.release(other.address)).to.be.revertedWith(
-        'Only owner may release',
+      await parkingSpot.connect(user).acquire()
+      await expect(parkingSpot.connect(other).release()).to.be.revertedWith(
+        'Only owner may perform operation',
       )
     })
   })

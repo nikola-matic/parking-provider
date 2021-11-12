@@ -3,45 +3,29 @@ pragma solidity ^0.8.0;
 
 import {ParkingState} from "./utils/structs/ParkingState.sol";
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
 import "hardhat/console.sol";
 import "./ParkingSpot.sol";
 import "./utils/access/ParkingAccessControl.sol";
 
-contract ParkingProvider is AccessControl, ParkingAccessControl {
+contract ParkingProvider is ParkingAccessControl {
     ParkingSpot[] private parkingSpots;
     ParkingState.State private parkingState;
 
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
-
-    constructor() {
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(MINTER_ROLE, msg.sender);
-        _setupRole(BURNER_ROLE, msg.sender);
-
+    constructor() ParkingAccessControl() {
         parkingState = ParkingState.State(0, 0);
     }
 
-    function createParkingSpot() external {
-        require(
-            hasRole(MINTER_ROLE, msg.sender),
-            "Only minter may create spot"
-        );
+    function createParkingSpot() external onlyMinter {
         parkingSpots.push(new ParkingSpot());
         parkingState.freeSpots += 1;
     }
 
     function destroyParkingSpot()
         external
+        onlyBurner
         ifSpotExists(parkingSpots)
         ifSpotAvailable(parkingState)
     {
-        require(
-            hasRole(BURNER_ROLE, msg.sender),
-            "Only burner may destroy spot"
-        );
-
         uint256 parkingSize = parkingSpots.length;
 
         for (uint256 i = 0; i < parkingSize; ++i) {
@@ -61,7 +45,7 @@ contract ParkingProvider is AccessControl, ParkingAccessControl {
     {
         for (uint256 i = 0; i < parkingSpots.length; ++i) {
             if (!parkingSpots[i].getMetaData().taken) {
-                parkingSpots[i].acquire(msg.sender);
+                parkingSpots[i].acquire();
                 parkingState.freeSpots -= 1;
                 parkingState.occupiedSpots += 1;
                 break;

@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {ParkingState} from "../structs/ParkingState.sol";
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "../../ParkingSpot.sol";
+import "../../parking/ParkingSpot.sol";
 
 abstract contract ParkingAccessControl is AccessControl {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");

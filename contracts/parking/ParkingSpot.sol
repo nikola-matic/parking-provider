@@ -1,11 +1,11 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import {ParkingMetaData} from "./utils/structs/ParkingMetaData.sol";
+import {ParkingMetaData} from "../utils/structs/ParkingMetaData.sol";
 
 import "hardhat/console.sol";
-import "./IParkingSpot.sol";
-import "./utils/access/ParkingAccessControl.sol";
+import "../interfaces/IParkingSpot.sol";
+import "../utils/access/ParkingAccessControl.sol";
 
 contract ParkingSpot is IParkingSpot, ParkingAccessControl {
     ParkingMetaData.MetaData internal metaData;

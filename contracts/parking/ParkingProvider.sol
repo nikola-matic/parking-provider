@@ -6,8 +6,9 @@ import {ParkingState} from "../utils/structs/ParkingState.sol";
 import "hardhat/console.sol";
 import "./ParkingSpot.sol";
 import "../utils/access/ParkingAccessControl.sol";
+import "../interfaces/IParkingProvider.sol";
 
-contract ParkingProvider is ParkingAccessControl {
+contract ParkingProvider is IParkingProvider, ParkingAccessControl {
     ParkingSpot[] private parkingSpots;
     ParkingState.State private parkingState;
 
@@ -15,13 +16,14 @@ contract ParkingProvider is ParkingAccessControl {
         parkingState = ParkingState.State(0, 0);
     }
 
-    function createParkingSpot() external onlyMinter {
+    function createParkingSpot() external override onlyMinter {
         parkingSpots.push(new ParkingSpot());
         parkingState.freeSpots += 1;
     }
 
     function destroyParkingSpot()
         external
+        override
         onlyBurner
         ifSpotExists(parkingSpots)
         ifSpotAvailable(parkingState)
@@ -40,6 +42,7 @@ contract ParkingProvider is ParkingAccessControl {
 
     function acquireSpot()
         external
+        override
         ifSpotExists(parkingSpots)
         ifSpotAvailable(parkingState)
     {
@@ -53,13 +56,19 @@ contract ParkingProvider is ParkingAccessControl {
         }
     }
 
-    function getParkingSpots() external view returns (ParkingSpot[] memory) {
+    function getParkingSpots()
+        external
+        view
+        override
+        returns (ParkingSpot[] memory)
+    {
         return parkingSpots;
     }
 
     function getParkingState()
         external
         view
+        override
         returns (ParkingState.State memory)
     {
         return parkingState;

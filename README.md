@@ -15,6 +15,14 @@ yarn compile
 ```console
 yarn test
 ```
+### Run tests with gas reporting
+```console
+yarn report
+```
+### Run tests with coverage reporting
+```console
+yarn coverage
+```
 ### Prettify .sol
 ```console
 yarn prettier

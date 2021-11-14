@@ -157,10 +157,12 @@ describe('ParkingProvider', async () => {
       await parkingProvider.createParkingSpot()
       await parkingProvider.connect(user).acquireSpot()
 
+      const parkingIndex = await parkingProvider.connect(user).getParkingId()
       const parkingState = await parkingProvider.getParkingState()
 
       expect(parkingState.freeSpots).to.equal(0)
       expect(parkingState.occupiedSpots).to.equal(1)
+      expect(parkingIndex).to.equal(0)
     })
 
     it('Should throw if no parking spots exist', async () => {
@@ -186,6 +188,19 @@ describe('ParkingProvider', async () => {
       await expect(
         parkingProvider.connect(user2).acquireSpot(),
       ).to.be.revertedWith('No free parking spots')
+    })
+  })
+
+  describe('Miscellaneous', async () => {
+    it('getParkingId should throw for unknown user', async () => {
+      const [deployer, user] = await ethers.getSigners()
+      const parkingProvider = new ParkingProvider__factory(deployer).attach(
+        contractAddress,
+      )
+
+      await expect(
+        parkingProvider.connect(user).getParkingId(),
+      ).to.be.revertedWith('Key not found')
     })
   })
 })

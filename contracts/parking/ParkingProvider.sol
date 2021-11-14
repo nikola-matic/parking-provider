@@ -6,11 +6,15 @@ import {ParkingState} from "../utils/structs/ParkingState.sol";
 import "hardhat/console.sol";
 import "./ParkingSpot.sol";
 import "../utils/access/ParkingAccessControl.sol";
+import "../utils/ds/MappingAddressInt.sol";
 import "../interfaces/IParkingProvider.sol";
 
 contract ParkingProvider is IParkingProvider, ParkingAccessControl {
+    using Mapping for mapping(address => Mapping.Uint);
+
     ParkingSpot[] private parkingSpots;
     ParkingState.State private parkingState;
+    mapping(address => Mapping.Uint) private mapAddressToIndex;
 
     constructor() ParkingAccessControl() {
         parkingState = ParkingState.State(0, 0);
@@ -48,6 +52,11 @@ contract ParkingProvider is IParkingProvider, ParkingAccessControl {
     {
         for (uint256 i = 0; i < parkingSpots.length; ++i) {
             if (!parkingSpots[i].getMetaData().taken) {
+                require(
+                    !mapAddressToIndex.contains(msg.sender),
+                    "Account already assigned"
+                );
+                mapAddressToIndex.insert(msg.sender, i);
                 parkingSpots[i].acquire();
                 parkingState.freeSpots -= 1;
                 parkingState.occupiedSpots += 1;
@@ -72,5 +81,9 @@ contract ParkingProvider is IParkingProvider, ParkingAccessControl {
         returns (ParkingState.State memory)
     {
         return parkingState;
+    }
+
+    function getParkingId() external view returns (uint256) {
+        return mapAddressToIndex.get(msg.sender);
     }
 }

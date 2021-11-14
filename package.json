@@ -3,6 +3,8 @@
   "scripts": {
     "compile": "npx hardhat compile",
     "test": "npx hardhat test",
+    "report": "REPORT_GAS=true npx hardhat test",
+    "coverage": "npx hardhat coverage",
     "prettier": "prettier --write 'contracts/**/*.sol'"
   },
   "devDependencies": {

@@ -15,7 +15,7 @@ library Array {
      * indexed by index
      * @param self reference to array
      * @param index index of element to erase
-     * @notice will throw if index larger than array length
+     * @notice Will throw if index larger than array length
      */
     function erase(ParkingSpot[] storage self, uint256 index) internal {
         require(self.length > index, "Out of range");

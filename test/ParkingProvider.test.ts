@@ -191,6 +191,45 @@ describe('ParkingProvider', async () => {
     })
   })
 
+  describe('Release parking spot', async () => {
+    it('Should release parking spot', async () => {
+      const [deployer, user] = await ethers.getSigners()
+      const parkingProvider = new ParkingProvider__factory(deployer).attach(
+        contractAddress,
+      )
+
+      await parkingProvider.createParkingSpot()
+      await parkingProvider.connect(user).acquireSpot()
+      await parkingProvider.connect(user).releaseSpot()
+
+      const parkingState = await parkingProvider.getParkingState()
+
+      expect(parkingState.freeSpots).to.equal(1)
+      expect(parkingState.occupiedSpots).to.equal(0)
+
+      await expect(
+        parkingProvider.connect(user).getParkingId(),
+      ).to.be.revertedWith('Key not found')
+    })
+
+    it('Should throw if sender has not acquired a spot previously', async () => {
+      const [deployer, user] = await ethers.getSigners()
+      const parkingProvider = new ParkingProvider__factory(deployer).attach(
+        contractAddress,
+      )
+
+      await parkingProvider.createParkingSpot()
+      await expect(
+        parkingProvider.connect(user).releaseSpot(),
+      ).to.be.revertedWith('Sender has not acquired spot')
+
+      const parkingState = await parkingProvider.getParkingState()
+
+      expect(parkingState.freeSpots).to.equal(1)
+      expect(parkingState.occupiedSpots).to.equal(0)
+    })
+  })
+
   describe('Miscellaneous', async () => {
     it('getParkingId should throw for unknown user', async () => {
       const [deployer, user] = await ethers.getSigners()

@@ -10,6 +10,8 @@ interface IParkingProvider {
 
     function acquireSpot() external;
 
+    function releaseSpot() external;
+
     function getParkingSpots() external view returns (ParkingSpot[] memory);
 
     function getParkingState()

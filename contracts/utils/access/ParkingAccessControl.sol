@@ -5,8 +5,10 @@ import {ParkingState} from "../structs/ParkingState.sol";
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "../../parking/ParkingSpot.sol";
+import "../ds/Mapping.sol";
 
 abstract contract ParkingAccessControl is AccessControl {
+    using Mapping for mapping(address => Mapping.Uint);
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
 
@@ -23,6 +25,16 @@ abstract contract ParkingAccessControl is AccessControl {
 
     modifier ifSpotAvailable(ParkingState.State memory parkingState) {
         require(parkingState.freeSpots > 0, "No free parking spots");
+        _;
+    }
+
+    modifier ifAcquiredSpot(
+        mapping(address => Mapping.Uint) storage addressMapping
+    ) {
+        require(
+            addressMapping.contains(msg.sender),
+            "Sender has not acquired spot"
+        );
         _;
     }
 

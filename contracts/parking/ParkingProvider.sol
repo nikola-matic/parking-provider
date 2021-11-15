@@ -6,7 +6,8 @@ import {ParkingState} from "../utils/structs/ParkingState.sol";
 import "hardhat/console.sol";
 import "./ParkingSpot.sol";
 import "../utils/access/ParkingAccessControl.sol";
-import "../utils/ds/MappingAddressInt.sol";
+import "../utils/ds/Mapping.sol";
+import "../utils/ds/Array.sol";
 import "../interfaces/IParkingProvider.sol";
 
 /**
@@ -16,6 +17,7 @@ import "../interfaces/IParkingProvider.sol";
  */
 contract ParkingProvider is IParkingProvider, ParkingAccessControl {
     using Mapping for mapping(address => Mapping.Uint);
+    using Array for ParkingSpot[];
 
     // Array holding all parking spots managed by this provider
     ParkingSpot[] private parkingSpots;
@@ -55,8 +57,7 @@ contract ParkingProvider is IParkingProvider, ParkingAccessControl {
 
         for (uint256 i = 0; i < parkingSize; ++i) {
             if (!parkingSpots[i].getMetaData().taken) {
-                parkingSpots[i] = parkingSpots[parkingSize - 1];
-                parkingSpots.pop();
+                parkingSpots.erase(i);
                 parkingState.freeSpots -= 1;
                 break;
             }

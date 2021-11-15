@@ -67,7 +67,7 @@ contract ParkingProvider is IParkingProvider, ParkingAccessControl {
     /**
      * @dev Acquire spot will find a free spot and acquire it for the
      * requesting user (msg.sender). Internal state will be updated accordingly.
-     * @notice Spot can only be acquire if there are available spots (both created
+     * @notice Spot can only be acquired if there are available spots (both created
      * and free/unoccupied)
      */
     function acquireSpot()
@@ -89,6 +89,21 @@ contract ParkingProvider is IParkingProvider, ParkingAccessControl {
                 break;
             }
         }
+    }
+
+    /**
+     * @dev Release parking spot will release the previously acquired spot back
+     * into circulation, and update the state variables accordingly.
+     * @notice Spot can only be released by if the caller has previously acquired
+     * a spot, otherwise, and exception will be thrown
+     */
+    function releaseSpot() external override ifAcquiredSpot(mapAddressToIndex) {
+        uint256 index = mapAddressToIndex.get(msg.sender);
+        mapAddressToIndex.erase(msg.sender);
+        parkingSpots[index].release();
+        parkingSpots.erase(index);
+        parkingState.freeSpots += 1;
+        parkingState.occupiedSpots -= 1;
     }
 
     /**

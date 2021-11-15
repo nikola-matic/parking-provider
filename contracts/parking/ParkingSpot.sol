@@ -38,7 +38,7 @@ contract ParkingSpot is IParkingSpot, ParkingAccessControl {
      * to false, and release time to current timestamp, in addition to
      * resetting ownership. Can be called by owner only, i.e whoever
      * acquired the spot initially.
-     * @notice will throw if called by non-owner
+     * @notice Will throw if called by non-owner
      */
     function release() external override ifOwnerOfSpot(this) {
         metaData.taken = false;
@@ -50,7 +50,7 @@ contract ParkingSpot is IParkingSpot, ParkingAccessControl {
 
     /**
      * @dev Gettet for spot's internal meta data (state)
-     * @return meta data
+     * @return internal meta data
      */
     function getMetaData()
         external

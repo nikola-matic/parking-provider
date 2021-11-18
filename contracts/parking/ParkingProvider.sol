@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import {ParkingState} from "../utils/structs/ParkingState.sol";
+import {Data} from "../utils/structs/Data.sol";
 
 import "hardhat/console.sol";
 import "./ParkingSpot.sol";
@@ -22,12 +22,12 @@ contract ParkingProvider is IParkingProvider, ParkingAccessControl {
     // Array holding all parking spots managed by this provider
     ParkingSpot[] private parkingSpots;
     // Structure holding current state of provider
-    ParkingState.State private parkingState;
+    Data.ParkingState private parkingState;
     // Mapping of users (msg.sender) to their parking spot index (see parkingSpots)
     mapping(address => Mapping.Uint) private mapAddressToIndex;
 
     constructor() ParkingAccessControl() {
-        parkingState = ParkingState.State(0, 0);
+        parkingState = Data.ParkingState(0, 0);
     }
 
     /**
@@ -127,7 +127,7 @@ contract ParkingProvider is IParkingProvider, ParkingAccessControl {
         external
         view
         override
-        returns (ParkingState.State memory)
+        returns (Data.ParkingState memory)
     {
         return parkingState;
     }

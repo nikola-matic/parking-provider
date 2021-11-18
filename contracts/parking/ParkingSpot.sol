@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import {ParkingMetaData} from "../utils/structs/ParkingMetaData.sol";
+import {Data} from "../utils/structs/Data.sol";
 
 import "hardhat/console.sol";
 import "../interfaces/IParkingSpot.sol";
@@ -14,11 +14,11 @@ import "../utils/access/ParkingAccessControl.sol";
  * ParkingSpots are created and managed by ParkingProvider.
  */
 contract ParkingSpot is IParkingSpot, ParkingAccessControl {
-    ParkingMetaData.MetaData internal metaData;
+    Data.ParkingMetaData internal metaData;
 
     constructor() {
         // Default initialize metadata
-        metaData = ParkingMetaData.MetaData(false, 0, 0, address(0));
+        metaData = Data.ParkingMetaData(false, 0, 0, address(0));
     }
 
     /**
@@ -55,7 +55,7 @@ contract ParkingSpot is IParkingSpot, ParkingAccessControl {
     function getMetaData()
         external
         view
-        returns (ParkingMetaData.MetaData memory)
+        returns (Data.ParkingMetaData memory)
     {
         return metaData;
     }

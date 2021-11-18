@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import {ParkingState} from "../structs/ParkingState.sol";
+import {Data} from "../structs/Data.sol";
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "../../parking/ParkingSpot.sol";
@@ -23,7 +23,7 @@ abstract contract ParkingAccessControl is AccessControl {
         _;
     }
 
-    modifier ifSpotAvailable(ParkingState.State memory parkingState) {
+    modifier ifSpotAvailable(Data.ParkingState memory parkingState) {
         require(parkingState.freeSpots > 0, "No free parking spots");
         _;
     }

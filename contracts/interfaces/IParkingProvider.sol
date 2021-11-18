@@ -17,5 +17,5 @@ interface IParkingProvider {
     function getParkingState()
         external
         view
-        returns (ParkingState.State memory);
+        returns (Data.ParkingState memory);
 }
